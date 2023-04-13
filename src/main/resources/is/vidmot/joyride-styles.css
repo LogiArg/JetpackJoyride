@@ -1,0 +1,4 @@
+#fxGameplay {
+    -fx-background-image: url("/pics/SectorStart.png");
+    -fx-background-size: cover;
+}

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<?import is.vidmot.Gameplay?>
 <?import javafx.scene.layout.AnchorPane?>
-
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" />
+<AnchorPane xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="is.vidmot.JoyrideController">
+    <children>
+        <Gameplay fx:id="fxGameplay"></Gameplay>
+    </children>
+</AnchorPane>
