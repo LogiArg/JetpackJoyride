@@ -13,7 +13,7 @@ public class Gameplay extends Pane {
     private AnimationTimer gameLoop;
     private ImageView background1;
     private ImageView background2;
-    private double backgroundSpeed = 5;
+    private double backgroundSpeed = 1;
 
     public Gameplay() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("gameplay-view.fxml"));
