@@ -32,8 +32,8 @@ public class Barry extends ImageView {
             throw new RuntimeException(exception);
         }
 
-        barry1 = new Image(getClass().getResourceAsStream("/is/vidmot/pics/Barry1.png"));
-        barry2 = new Image(getClass().getResourceAsStream("/is/vidmot/pics/Barry2.png"));
+        barry1 = new Image(getClass().getResourceAsStream("/is/vidmot/pics/barry1.png"));
+        barry2 = new Image(getClass().getResourceAsStream("/is/vidmot/pics/barry2.png"));
 
         setImage(barry1);
 
@@ -71,6 +71,14 @@ public class Barry extends ImageView {
             setImage(barry2);
         } else {
             setImage(barry1);
+        }
+    }
+
+    public void toggleAnimation(boolean play) {
+        if (play) {
+            animation.play();
+        } else {
+            animation.pause();
         }
     }
 }

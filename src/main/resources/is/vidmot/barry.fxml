@@ -3,6 +3,6 @@
 <?import javafx.scene.image.ImageView?>
 <fx:root type="javafx.scene.image.ImageView" xmlns:fx="http://javafx.com/fxml/1">
     <image>
-        <Image url="@../vidmot/pics/Barry1.png"/>
+        <Image url="@pics/barry1.png"/>
     </image>
 </fx:root>
