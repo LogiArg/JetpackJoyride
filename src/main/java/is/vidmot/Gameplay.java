@@ -1,6 +1,8 @@
 package is.vidmot;
 
 import javafx.animation.AnimationTimer;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
@@ -27,6 +29,7 @@ public class Gameplay extends Pane {
     private List<Zapper> zappers = new ArrayList<>();
     private Random random = new Random();
     private static final double ZAPPER_SCALE = 0.75;
+    private BooleanProperty isGameOver = new SimpleBooleanProperty(false);
 
     private ImageView quitButton;
     private ImageView retryButton;
@@ -45,7 +48,7 @@ public class Gameplay extends Pane {
 
     private void startGame() {
         createBackground();
-        barry = new Barry(this);
+        barry = new Barry(this, isGameOver);
         barry.setFitWidth(48);
         barry.setFitHeight(56);
         barry.setX(150);
@@ -132,6 +135,7 @@ public class Gameplay extends Pane {
     }
 
     private void showGameOverScreen() {
+        isGameOver.set(true);
         Pane overlayPane = new Pane();
         overlayPane.setStyle("-fx-background-color: rgba(0, 0, 0, 0.35);");
         overlayPane.setPrefSize(800, 461);

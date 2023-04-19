@@ -2,6 +2,7 @@ package is.vidmot;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.property.BooleanProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -21,8 +22,11 @@ public class Barry extends ImageView {
     private Timeline animation;
     private Image barry1;
     private Image barry2;
+    private Image barryRising;
+    private Image barryFalling;
+    private BooleanProperty isGameOver;
 
-    public Barry(Pane gamePane) {
+    public Barry(Pane gamePane, BooleanProperty isGameOver) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("barry.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
@@ -34,6 +38,8 @@ public class Barry extends ImageView {
 
         barry1 = new Image(getClass().getResourceAsStream("/is/vidmot/pics/barry1.png"));
         barry2 = new Image(getClass().getResourceAsStream("/is/vidmot/pics/barry2.png"));
+        barryRising = new Image(getClass().getResourceAsStream("/is/vidmot/pics/barry_rising.png"));
+        barryFalling = new Image(getClass().getResourceAsStream("/is/vidmot/pics/barry_falling.png"));
 
         setImage(barry1);
 
@@ -41,10 +47,27 @@ public class Barry extends ImageView {
         gamePane.setOnKeyReleased(event -> pressedKeys.put(event.getCode(), false));
 
         animation = new Timeline(
-                new KeyFrame(Duration.millis(150), event -> switchImage())
+                new KeyFrame(Duration.ZERO, event -> switchImage()),
+                new KeyFrame(Duration.millis(150))
         );
         animation.setCycleCount(Timeline.INDEFINITE);
         animation.play();
+        this.isGameOver = isGameOver;
+    }
+
+    private void updateImage() {
+        double maxY = 461 - 30 - getFitHeight();
+        if (getTranslateY() < maxY) {
+            if (velocityY < 0) {
+                setImage(barryRising);
+            } else {
+                setImage(barryFalling);
+            }
+        } else {
+            if (getImage() != barry1 && getImage() != barry2) {
+                setImage(barry1);
+            }
+        }
     }
 
     public void update() {
@@ -64,19 +87,25 @@ public class Barry extends ImageView {
             velocityY = 0;
         }
         setTranslateY(newY);
+        updateImage();
     }
 
     private void switchImage() {
-        if (getImage() == barry1) {
+        double maxY = 461 - 30 - getFitHeight();
+        if (getImage() == barry1 && getTranslateY() == maxY) {
             setImage(barry2);
-        } else {
+        } else if (getImage() == barry2 && getTranslateY() == maxY) {
             setImage(barry1);
         }
     }
 
     public void toggleAnimation(boolean play) {
-        if (play) {
-            animation.play();
+        if (!isGameOver.get()) {
+            if (play) {
+                animation.play();
+            } else {
+                animation.pause();
+            }
         } else {
             animation.pause();
         }
