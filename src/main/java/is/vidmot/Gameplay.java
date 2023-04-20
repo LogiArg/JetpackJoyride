@@ -4,15 +4,12 @@ import javafx.animation.AnimationTimer;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,11 +25,9 @@ public class Gameplay extends Pane {
     private long lastZapperSpawnTime = 0;
     private List<Zapper> zappers = new ArrayList<>();
     private Random random = new Random();
-    private static final double ZAPPER_SCALE = 0.75;
     private BooleanProperty isGameOver = new SimpleBooleanProperty(false);
-
-    private ImageView quitButton;
-    private ImageView retryButton;
+    private long lastPatternSpawnTime = 0;
+    private List<Coin> coinsToRemove = new ArrayList<>();
 
     public Gameplay() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("gameplay-view.fxml"));
@@ -62,10 +57,8 @@ public class Gameplay extends Pane {
                 updateBackground();
                 barry.update();
                 spawnZappers(now);
-                if (checkCollision()) {
-                    gameLoop.stop();
-                    showGameOverScreen();
-                }
+                checkCollision();
+                updateCoins();
             }
         };
         gameLoop.start();
@@ -97,14 +90,12 @@ public class Gameplay extends Pane {
         double lastSpawnTimeInSeconds = lastZapperSpawnTime / 1000.0;
 
         if (currentTimeInSeconds - lastSpawnTimeInSeconds >= random.nextInt(2) + 3) { // 3-5 secs
-            double y = random.nextDouble() * (431 - 15 - 237 * ZAPPER_SCALE) + 15; // Random y
+            double y = random.nextDouble() * (431 - 15 - 237) + 15; // Random y
             double angle = random.nextInt(4) * 90; // Random angle (0°, 90°, 180°, 270°)
             if (angle == 180) {
                 angle = 45;
             }
             Zapper zapper = new Zapper(840, y, angle);
-            zapper.setScaleX(ZAPPER_SCALE);
-            zapper.setScaleY(ZAPPER_SCALE);
             zappers.add(zapper);
             getChildren().add(zapper);
             lastZapperSpawnTime = System.currentTimeMillis();
@@ -113,66 +104,72 @@ public class Gameplay extends Pane {
         for (Zapper zapper : zappers) {
             zapper.setTranslateX(zapper.getTranslateX() - backgroundSpeed);
             // despawn
-            if (zapper.getTranslateX() + zapper.getChildren().get(0).getBoundsInParent().getWidth() * ZAPPER_SCALE < -240) {
+            if (zapper.getTranslateX() + zapper.getChildren().get(0).getBoundsInParent().getWidth() < -240) {
                 getChildren().remove(zapper);
             }
         }
+        currentTimeInSeconds = System.currentTimeMillis() / 1000.0;
+        lastSpawnTimeInSeconds = lastPatternSpawnTime / 1000.0;
+        if (currentTimeInSeconds - lastSpawnTimeInSeconds >= random.nextInt(5) + 5) { // 5-10 seconds
+            List<List<Coin>> pattern = Coin.loadCoinPattern("/is/vidmot/coin_patterns/pattern1.txt");
+            for (List<Coin> row : pattern) {
+                for (Coin coin : row) {
+                    coin.setTranslateX(coin.getTranslateX() + 840);
+                    getChildren().add(coin);
+                }
+            }
+            lastPatternSpawnTime = System.currentTimeMillis();
+        }
 
-        zappers.removeIf(zapper -> zapper.getTranslateX() + zapper.getChildren().get(0).getBoundsInParent().getWidth() * ZAPPER_SCALE < -240);
+        zappers.removeIf(zapper -> zapper.getTranslateX() + zapper.getChildren().get(0).getBoundsInParent().getWidth() < -240);
+    }
+
+    private void updateCoins() {
+        for (Node node : getChildren()) {
+            if (node instanceof Coin) {
+                Coin coin = (Coin) node;
+                coin.setTranslateX(coin.getTranslateX() - backgroundSpeed);
+
+                if (coin.getTranslateX() <= 650 && !coin.animationPlaying()) {
+                    coin.animate();
+                }
+                // Create a smaller hitbox for the coin
+                Rectangle coinHitbox = new Rectangle(
+                        coin.getBoundsInParent().getMinX() + 5,
+                        coin.getBoundsInParent().getMinY() + 5,
+                        coin.getBoundsInParent().getWidth() - 10,
+                        coin.getBoundsInParent().getHeight() - 10
+                );
+                // Check for collision with Barry and remove the coin if there's a collision
+                if (barry.getBoundsInParent().intersects(coinHitbox.getBoundsInParent())) {
+                    coinsToRemove.add(coin);
+                }
+                if (coin.getTranslateX() + coin.getWidth() < 0) {
+                    coinsToRemove.add(coin);
+                }
+            }
+        }
+        getChildren().removeAll(coinsToRemove);
+        coinsToRemove.clear();
     }
 
     private boolean checkCollision() {
         for (Zapper zapper : zappers) {
             Rectangle zapperRectangle = zapper.getRectangle();
-            Bounds zapperBounds = zapper.localToScene(zapperRectangle.getBoundsInLocal());
             Rectangle barryBoundsRect = new Rectangle(barry.getBoundsInParent().getMinX(), barry.getBoundsInParent().getMinY(), barry.getBoundsInParent().getWidth(), barry.getBoundsInParent().getHeight() - 10);
             Shape intersection = Shape.intersect(barryBoundsRect, zapperRectangle);
             if (intersection.getBoundsInLocal().getWidth() != -1) {
+                gameLoop.stop();
+                GameOver gameOver = new GameOver(() -> restartGame(), () -> System.exit(0));
+                getChildren().add(gameOver);
+                barry.toggleAnimation(false);
                 return true;
             }
         }
         return false;
     }
 
-    private void showGameOverScreen() {
-        isGameOver.set(true);
-        Pane overlayPane = new Pane();
-        overlayPane.setStyle("-fx-background-color: rgba(0, 0, 0, 0.35);");
-        overlayPane.setPrefSize(800, 461);
-        getChildren().add(overlayPane);
-
-        Text gameOverText = new Text("Want to go again?");
-        gameOverText.setFont(Font.loadFont(getClass().getResourceAsStream("/is/vidmot/fonts/New Athletic M54.ttf"), 40));
-        gameOverText.setFill(Color.WHITE);
-        gameOverText.setStroke(Color.BLACK);
-        gameOverText.setStrokeWidth(2.5);
-        gameOverText.setX(240);
-        gameOverText.setY(153 + 40);
-        overlayPane.getChildren().add(gameOverText);
-
-        quitButton = new ImageView(new Image(getClass().getResourceAsStream("/is/vidmot/pics/quit.png")));
-        quitButton.setFitWidth(144);
-        quitButton.setFitHeight(50);
-        quitButton.setLayoutX(208);
-        quitButton.setLayoutY(307);
-        quitButton.setOnMouseClicked(event -> System.exit(0));
-        overlayPane.getChildren().add(quitButton);
-
-        retryButton = new ImageView(new Image(getClass().getResourceAsStream("/is/vidmot/pics/retry.png")));
-        retryButton.setFitWidth(144);
-        retryButton.setFitHeight(50);
-        retryButton.setLayoutX(448);
-        retryButton.setLayoutY(307);
-        retryButton.setOnMouseClicked(event -> restartGame());
-        overlayPane.getChildren().add(retryButton);
-
-        barry.toggleAnimation(false);
-    }
-
     private void restartGame() {
-        getChildren().remove(quitButton);
-        getChildren().remove(retryButton);
-
         background1.setTranslateX(0);
         background2.setTranslateX(background1.getImage().getWidth());
 

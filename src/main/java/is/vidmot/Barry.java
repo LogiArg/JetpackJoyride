@@ -40,7 +40,6 @@ public class Barry extends ImageView {
         barry2 = new Image(getClass().getResourceAsStream("/is/vidmot/pics/barry2.png"));
         barryRising = new Image(getClass().getResourceAsStream("/is/vidmot/pics/barry_rising.png"));
         barryFalling = new Image(getClass().getResourceAsStream("/is/vidmot/pics/barry_falling.png"));
-
         setImage(barry1);
 
         gamePane.setOnKeyPressed(event -> pressedKeys.put(event.getCode(), true));
