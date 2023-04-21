@@ -54,6 +54,7 @@ public class Gameplay extends Pane {
         setFocusTraversable(true);
         lastZapperSpawnTime = System.currentTimeMillis();
         barry.toggleAnimation(true);
+
         gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -138,12 +139,13 @@ public class Gameplay extends Pane {
                 }
                 // smaller coin hitbox
                 Rectangle coinHitbox = new Rectangle(
-                        coin.getBoundsInParent().getMinX() + 5,
-                        coin.getBoundsInParent().getMinY() + 5,
-                        coin.getBoundsInParent().getWidth() - 10,
-                        coin.getBoundsInParent().getHeight() - 10
+                        coin.getBoundsInParent().getMinX() + 3,
+                        coin.getBoundsInParent().getMinY() + 3,
+                        coin.getBoundsInParent().getWidth() - 8,
+                        coin.getBoundsInParent().getHeight() - 8
                 );
                 if (barry.getBoundsInParent().intersects(coinHitbox.getBoundsInParent())) {
+                    coin.playCoinSound();
                     coin.playCoinCollectedAnimation();
                     Timeline removeCoinTimeline = new Timeline(new KeyFrame(Duration.millis(800), e -> {
                         coinsToRemove.add(coin);
@@ -161,7 +163,6 @@ public class Gameplay extends Pane {
         getChildren().removeAll(coinsToRemove);
         coinsToRemove.clear();
     }
-
 
     private boolean checkCollision() {
         for (Zapper zapper : zappers) {

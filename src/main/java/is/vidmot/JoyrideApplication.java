@@ -15,6 +15,7 @@ public class JoyrideApplication extends Application {
         stage.setTitle("Jetpack Joyride");
         stage.setScene(scene);
         stage.show();
+        SoundManager.initialize();
     }
 
     public static void main(String[] args) {

@@ -94,6 +94,10 @@ public class Coin extends Pane {
         collectedAnimation.play();
     }
 
+    public void playCoinSound() {
+        SoundManager.playCoinSound();
+    }
+
     public boolean animationPlaying() {
         return animationPlaying;
     }
