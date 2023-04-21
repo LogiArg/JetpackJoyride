@@ -17,6 +17,7 @@ import java.util.List;
 public class Coin extends Pane {
     private ImageView imageView;
     private boolean animationPlaying = false;
+    private boolean animationPlayed = false;
 
     public Coin(double x, double y) {
         Image coinImage = new Image(getClass().getResourceAsStream("/is/vidmot/pics/coins/coin1.png"));
@@ -65,12 +66,39 @@ public class Coin extends Pane {
             KeyFrame keyFrame = new KeyFrame(Duration.millis(i * 100), e -> imageView.setImage(coinImage));
             animation.getKeyFrames().add(keyFrame);
         }
-        animation.setOnFinished(e -> animationPlaying = false);
+        Image coinImage = new Image(getClass().getResourceAsStream("/is/vidmot/pics/coins/coin1.png"));
+        KeyFrame keyFrame = new KeyFrame(Duration.millis(700), e -> imageView.setImage(coinImage));
+        animation.getKeyFrames().add(keyFrame);
+
+        animation.setOnFinished(e -> {
+            animationPlaying = false;
+            animationPlayed = true;
+        });
         animation.setCycleCount(1);
         animation.play();
     }
 
+    public void playCoinCollectedAnimation() {
+        Timeline collectedAnimation = new Timeline();
+        for (int i = 1; i <= 4; i++) {
+            Image coinImage = new Image(getClass().getResourceAsStream("/is/vidmot/pics/coins/coinc" + i + ".png"));
+            KeyFrame keyFrame = new KeyFrame(Duration.millis(i * 66), e -> {
+                imageView.setImage(coinImage);
+                imageView.setFitWidth(34);
+                imageView.setFitHeight(34);
+            });
+            collectedAnimation.getKeyFrames().add(keyFrame);
+        }
+        collectedAnimation.setOnFinished(e -> imageView.setImage(null));
+        collectedAnimation.setCycleCount(1);
+        collectedAnimation.play();
+    }
+
     public boolean animationPlaying() {
         return animationPlaying;
+    }
+
+    public boolean animationPlayed() {
+        return animationPlayed;
     }
 }

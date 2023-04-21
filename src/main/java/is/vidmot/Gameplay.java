@@ -1,6 +1,8 @@
 package is.vidmot;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXMLLoader;
@@ -10,6 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -89,9 +92,9 @@ public class Gameplay extends Pane {
         double currentTimeInSeconds = System.currentTimeMillis() / 1000.0;
         double lastSpawnTimeInSeconds = lastZapperSpawnTime / 1000.0;
 
-        if (currentTimeInSeconds - lastSpawnTimeInSeconds >= random.nextInt(2) + 3) { // 3-5 secs
-            double y = random.nextDouble() * (431 - 15 - 237) + 15; // Random y
-            double angle = random.nextInt(4) * 90; // Random angle (0°, 90°, 180°, 270°)
+        if (currentTimeInSeconds - lastSpawnTimeInSeconds >= random.nextInt(2) + 3) {
+            double y = random.nextDouble() * (431 - 15 - 237) + 15;
+            double angle = random.nextInt(4) * 90;
             if (angle == 180) {
                 angle = 45;
             }
@@ -130,19 +133,25 @@ public class Gameplay extends Pane {
                 Coin coin = (Coin) node;
                 coin.setTranslateX(coin.getTranslateX() - backgroundSpeed);
 
-                if (coin.getTranslateX() <= 650 && !coin.animationPlaying()) {
+                if (coin.getTranslateX() <= 650 && !coin.animationPlaying() && !coin.animationPlayed()) {
                     coin.animate();
                 }
-                // Create a smaller hitbox for the coin
+                // smaller coin hitbox
                 Rectangle coinHitbox = new Rectangle(
                         coin.getBoundsInParent().getMinX() + 5,
                         coin.getBoundsInParent().getMinY() + 5,
                         coin.getBoundsInParent().getWidth() - 10,
                         coin.getBoundsInParent().getHeight() - 10
                 );
-                // Check for collision with Barry and remove the coin if there's a collision
                 if (barry.getBoundsInParent().intersects(coinHitbox.getBoundsInParent())) {
-                    coinsToRemove.add(coin);
+                    coin.playCoinCollectedAnimation();
+                    Timeline removeCoinTimeline = new Timeline(new KeyFrame(Duration.millis(800), e -> {
+                        coinsToRemove.add(coin);
+                        getChildren().removeAll(coinsToRemove);
+                        coinsToRemove.clear();
+                    }));
+                    removeCoinTimeline.setCycleCount(1);
+                    removeCoinTimeline.play();
                 }
                 if (coin.getTranslateX() + coin.getWidth() < 0) {
                     coinsToRemove.add(coin);
@@ -152,6 +161,7 @@ public class Gameplay extends Pane {
         getChildren().removeAll(coinsToRemove);
         coinsToRemove.clear();
     }
+
 
     private boolean checkCollision() {
         for (Zapper zapper : zappers) {

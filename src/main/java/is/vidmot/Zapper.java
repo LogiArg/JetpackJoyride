@@ -20,16 +20,15 @@ public class Zapper extends Pane {
         imageView.setFitWidth(55);
         imageView.setFitHeight(165);
         getChildren().add(imageView);
-        rectangle = new Rectangle(55 * 0.8, 165 * 0.8); // Adjust hitbox size here
-        rectangle.setTranslateX(0.1 * 55); // Adjust hitbox X position
-        rectangle.setTranslateY(0.1 * 165); // Adjust hitbox Y position
+        rectangle = new Rectangle(55 * 0.8, 165 * 0.8);
+        rectangle.setTranslateX(0.1 * 55);
+        rectangle.setTranslateY(0.1 * 165);
         rectangle.setVisible(false);
         getChildren().add(rectangle);
         setTranslateX(x);
         setTranslateY(y);
         setRotate(angle);
 
-        // Start the zapper animation
         startZapperAnimation();
     }
 
