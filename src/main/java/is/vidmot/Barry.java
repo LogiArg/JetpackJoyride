@@ -13,19 +13,59 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
+/**
+ * The type Barry.
+ */
 public class Barry extends ImageView {
+    /**
+     * The constant GRAVITY.
+     */
     private static final double GRAVITY = 0.25;
+    /**
+     * The constant JETPACK_FORCE.
+     */
     private static final double JETPACK_FORCE = -0.5;
+    /**
+     * The Velocity y.
+     */
     private double velocityY = 0;
-    private Map<KeyCode, Boolean> pressedKeys = new HashMap<>();
-    private Timeline animation;
-    private Image barry1;
-    private Image barry2;
-    private Image barryRising;
-    private Image barryFalling;
-    private BooleanProperty isGameOver;
+    /**
+     * The Pressed keys.
+     */
+    private final Map<KeyCode, Boolean> pressedKeys = new HashMap<>();
+    /**
+     * The Animation.
+     */
+    private final Timeline animation;
+    /**
+     * The Barry 1.
+     */
+    private final Image barry1;
+    /**
+     * The Barry 2.
+     */
+    private final Image barry2;
+    /**
+     * The Barry rising.
+     */
+    private final Image barryRising;
+    /**
+     * The Barry falling.
+     */
+    private final Image barryFalling;
+    /**
+     * The Is game over.
+     */
+    private final BooleanProperty isGameOver;
 
+    /**
+     * Instantiates a new Barry.
+     *
+     * @param gamePane   the game pane
+     * @param isGameOver the is game over
+     */
     public Barry(Pane gamePane, BooleanProperty isGameOver) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("barry.fxml"));
         fxmlLoader.setRoot(this);
@@ -36,10 +76,10 @@ public class Barry extends ImageView {
             throw new RuntimeException(exception);
         }
 
-        barry1 = new Image(getClass().getResourceAsStream("/is/vidmot/pics/barry1.png"));
-        barry2 = new Image(getClass().getResourceAsStream("/is/vidmot/pics/barry2.png"));
-        barryRising = new Image(getClass().getResourceAsStream("/is/vidmot/pics/barry_rising.png"));
-        barryFalling = new Image(getClass().getResourceAsStream("/is/vidmot/pics/barry_falling.png"));
+        barry1 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/is/vidmot/pics/barry1.png")));
+        barry2 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/is/vidmot/pics/barry2.png")));
+        barryRising = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/is/vidmot/pics/barry_rising.png")));
+        barryFalling = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/is/vidmot/pics/barry_falling.png")));
         setImage(barry1);
 
         gamePane.setOnKeyPressed(event -> pressedKeys.put(event.getCode(), true));
@@ -54,6 +94,9 @@ public class Barry extends ImageView {
         this.isGameOver = isGameOver;
     }
 
+    /**
+     * Update image.
+     */
     private void updateImage() {
         double maxY = 461 - 30 - getFitHeight();
         if (getTranslateY() < maxY) {
@@ -69,6 +112,9 @@ public class Barry extends ImageView {
         }
     }
 
+    /**
+     * Update.
+     */
     public void update() {
         double minY = 15;
         double maxY = 461 - 30 - getFitHeight();
@@ -89,6 +135,9 @@ public class Barry extends ImageView {
         updateImage();
     }
 
+    /**
+     * Switch image.
+     */
     private void switchImage() {
         double maxY = 461 - 30 - getFitHeight();
         if (getImage() == barry1 && getTranslateY() == maxY) {
@@ -98,6 +147,11 @@ public class Barry extends ImageView {
         }
     }
 
+    /**
+     * Toggle animation.
+     *
+     * @param play the play
+     */
     public void toggleAnimation(boolean play) {
         if (!isGameOver.get()) {
             if (play) {
@@ -110,6 +164,11 @@ public class Barry extends ImageView {
         }
     }
 
+    /**
+     * Gets max y.
+     *
+     * @return the max y
+     */
     public double getMaxY() {
         return 461 - 30 - getFitHeight();
     }

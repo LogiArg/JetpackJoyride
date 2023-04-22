@@ -8,14 +8,38 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
+import java.util.Objects;
+
+/**
+ * The type Zapper.
+ */
 public class Zapper extends Pane {
-    private ImageView imageView;
-    private Rectangle rectangle;
+    /**
+     * The Image view.
+     */
+    private final ImageView imageView;
+    /**
+     * The Rectangle.
+     */
+    private final Rectangle rectangle;
+    /**
+     * The Current image index.
+     */
     private int currentImageIndex = 1;
+    /**
+     * The Zapper animation.
+     */
     private Timeline zapperAnimation;
 
+    /**
+     * Instantiates a new Zapper.
+     *
+     * @param x     the x
+     * @param y     the y
+     * @param angle the angle
+     */
     public Zapper(double x, double y, double angle) {
-        Image zapperImage = new Image(getClass().getResourceAsStream("/is/vidmot/pics/zap/zap1.png"));
+        Image zapperImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/is/vidmot/pics/zap/zap1.png")));
         imageView = new ImageView(zapperImage);
         imageView.setFitWidth(55);
         imageView.setFitHeight(165);
@@ -32,17 +56,25 @@ public class Zapper extends Pane {
         startZapperAnimation();
     }
 
+    /**
+     * Gets rectangle.
+     *
+     * @return the rectangle
+     */
     public Rectangle getRectangle() {
         return rectangle;
     }
 
+    /**
+     * Start zapper animation.
+     */
     private void startZapperAnimation() {
         zapperAnimation = new Timeline(new KeyFrame(Duration.millis(200), event -> {
             currentImageIndex++;
             if (currentImageIndex > 5) {
                 currentImageIndex = 1;
             }
-            Image newZapperImage = new Image(getClass().getResourceAsStream("/is/vidmot/pics/zap/zap" + currentImageIndex + ".png"));
+            Image newZapperImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/is/vidmot/pics/zap/zap" + currentImageIndex + ".png")));
             imageView.setImage(newZapperImage);
         }));
         zapperAnimation.setCycleCount(Timeline.INDEFINITE);

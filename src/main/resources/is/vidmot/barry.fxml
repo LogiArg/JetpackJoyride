@@ -2,7 +2,5 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <fx:root type="javafx.scene.image.ImageView" xmlns:fx="http://javafx.com/fxml/1">
-    <image>
-        <Image url="@pics/barry1.png"/>
-    </image>
+    <Image url="@pics/barry1.png"/>
 </fx:root>

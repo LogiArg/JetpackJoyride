@@ -19,27 +19,82 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
+/**
+ * The type Gameplay.
+ */
 public class Gameplay extends Pane {
+    /**
+     * The Zappers.
+     */
+    private final List<Zapper> zappers = new ArrayList<>();
+    /**
+     * The Random.
+     */
+    private final Random random = new Random();
+    /**
+     * The Is game over.
+     */
+    private final BooleanProperty isGameOver = new SimpleBooleanProperty(false);
+    /**
+     * The Coins to remove.
+     */
+    private final List<Coin> coinsToRemove = new ArrayList<>();
+    /**
+     * The Missiles.
+     */
+    private final List<Missile> missiles = new ArrayList<>();
+    /**
+     * The Coin count.
+     */
+    private final IntegerProperty coinCount = new SimpleIntegerProperty(0);
+    /**
+     * The Meter count.
+     */
+    private final IntegerProperty meterCount = new SimpleIntegerProperty(0);
+    /**
+     * The Barry.
+     */
     private Barry barry;
+    /**
+     * The Game loop.
+     */
     private AnimationTimer gameLoop;
-    private List<Zapper> zappers = new ArrayList<>();
-    private Random random = new Random();
-    private BooleanProperty isGameOver = new SimpleBooleanProperty(false);
-    private List<Coin> coinsToRemove = new ArrayList<>();
-    private List<Missile> missiles = new ArrayList<>();
+    /**
+     * The Last spawn time.
+     */
     private long lastSpawnTime = 0;
-    private IntegerProperty coinCount = new SimpleIntegerProperty(0);
-    private IntegerProperty meterCount = new SimpleIntegerProperty(0);
+    /**
+     * The Background pos x.
+     */
     private int backgroundPosX = 0;
 
+    /**
+     * The Background 1.
+     */
     private ImageView background1;
+    /**
+     * The Background 2.
+     */
     private ImageView background2;
+    /**
+     * The Background speed.
+     */
     private double backgroundSpeed = 3;
+    /**
+     * The Current background style.
+     */
     private BackgroundStyle currentBackgroundStyle;
+    /**
+     * The Current background index.
+     */
     private int currentBackgroundIndex;
 
+    /**
+     * Instantiates a new Gameplay.
+     */
     public Gameplay() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("gameplay-view.fxml"));
         fxmlLoader.setRoot(this);
@@ -52,6 +107,9 @@ public class Gameplay extends Pane {
         startGame();
     }
 
+    /**
+     * Start game.
+     */
     private void startGame() {
         createBackground();
 
@@ -87,6 +145,9 @@ public class Gameplay extends Pane {
         gameLoop.start();
     }
 
+    /**
+     * Update background speed.
+     */
     private void updateBackgroundSpeed() {
         double maxSpeed = 10;
         double minSpeed = 3;
@@ -99,15 +160,21 @@ public class Gameplay extends Pane {
         }
     }
 
+    /**
+     * Create background.
+     */
     private void createBackground() {
         currentBackgroundStyle = BackgroundStyle.SECTOR;
         currentBackgroundIndex = 2;
         loadImageAndSetBackgrounds();
     }
 
+    /**
+     * Load image and set backgrounds.
+     */
     private void loadImageAndSetBackgrounds() {
         String backgroundPath = String.format("/is/vidmot/pics/background/%s%d.png", currentBackgroundStyle, currentBackgroundIndex);
-        Image backgroundImage = new Image(getClass().getResourceAsStream(backgroundPath));
+        Image backgroundImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(backgroundPath)));
         if (background1 == null || background2 == null) {
             background1 = new ImageView(backgroundImage);
             background2 = new ImageView(backgroundImage);
@@ -122,6 +189,9 @@ public class Gameplay extends Pane {
         }
     }
 
+    /**
+     * Update background.
+     */
     private void updateBackground() {
         background1.setTranslateX(background1.getTranslateX() - backgroundSpeed);
         background2.setTranslateX(background2.getTranslateX() - backgroundSpeed);
@@ -135,6 +205,9 @@ public class Gameplay extends Pane {
         }
     }
 
+    /**
+     * Next background.
+     */
     private void nextBackground() {
         currentBackgroundIndex++;
 
@@ -151,26 +224,30 @@ public class Gameplay extends Pane {
         loadImageAndSetBackgrounds();
     }
 
+    /**
+     * Spawn random item.
+     *
+     * @param now the now
+     */
     private void spawnRandomItem(long now) {
         double currentTimeInSeconds = System.currentTimeMillis() / 1000.0;
         double lastSpawnTimeInSeconds = lastSpawnTime / 1000.0;
         if (currentTimeInSeconds - lastSpawnTimeInSeconds >= random.nextInt(5) + 3) {
             int choice = random.nextInt(3);
             switch (choice) {
-                case 0:
-                    spawnMissiles(now);
-                    break;
-                case 1:
-                    spawnZappers(now);
-                    break;
-                case 2:
-                    spawnCoins(now);
-                    break;
+                case 0 -> spawnMissiles(now);
+                case 1 -> spawnZappers(now);
+                case 2 -> spawnCoins(now);
             }
             lastSpawnTime = System.currentTimeMillis();
         }
     }
 
+    /**
+     * Spawn zappers.
+     *
+     * @param now the now
+     */
     private void spawnZappers(long now) {
         double y = random.nextDouble() * (431 - 15 - 237) + 15;
         double angle = random.nextInt(4) * 90;
@@ -182,6 +259,9 @@ public class Gameplay extends Pane {
         getChildren().add(newZapper);
     }
 
+    /**
+     * Update zappers.
+     */
     private void updateZappers() {
         for (Zapper zapper : zappers) {
             zapper.setTranslateX(zapper.getTranslateX() - backgroundSpeed);
@@ -193,6 +273,11 @@ public class Gameplay extends Pane {
         zappers.removeIf(zapper -> zapper.getTranslateX() + zapper.getChildren().get(0).getBoundsInParent().getWidth() < -240);
     }
 
+    /**
+     * Spawn coins.
+     *
+     * @param now the now
+     */
     private void spawnCoins(long now) {
         int randomPatternNumber = random.nextInt(11) + 1;
         String patternPath = "/is/vidmot/coin_patterns/pattern" + randomPatternNumber + ".txt";
@@ -206,10 +291,12 @@ public class Gameplay extends Pane {
         }
     }
 
+    /**
+     * Update coins.
+     */
     private void updateCoins() {
         for (Node node : getChildren()) {
-            if (node instanceof Coin) {
-                Coin coin = (Coin) node;
+            if (node instanceof Coin coin) {
                 coin.setTranslateX(coin.getTranslateX() - backgroundSpeed);
                 if (coin.getTranslateX() <= 650 && !coin.animationPlaying() && !coin.animationPlayed()) {
                     coin.animate();
@@ -243,6 +330,11 @@ public class Gameplay extends Pane {
         coinsToRemove.clear();
     }
 
+    /**
+     * Spawn missiles.
+     *
+     * @param now the now
+     */
     private void spawnMissiles(long now) {
         double y = random.nextDouble() * (431 - 15 - 237) + 15;
         ImageView warningView = new ImageView();
@@ -262,8 +354,8 @@ public class Gameplay extends Pane {
 
         Timeline warningTimeline = new Timeline();
         for (int i = 0; i < 10; i++) {
-            Image warningImage1 = new Image(getClass().getResourceAsStream("/is/vidmot/pics/missile/warning1.png"));
-            Image warningImage2 = new Image(getClass().getResourceAsStream("/is/vidmot/pics/missile/warning2.png"));
+            Image warningImage1 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/is/vidmot/pics/missile/warning1.png")));
+            Image warningImage2 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/is/vidmot/pics/missile/warning2.png")));
             KeyFrame keyFrame1 = new KeyFrame(Duration.millis(i * 250), e -> warningView.setImage(warningImage1));
             KeyFrame keyFrame2 = new KeyFrame(Duration.millis(i * 250 + 125), e -> warningView.setImage(warningImage2));
             warningTimeline.getKeyFrames().addAll(keyFrame1, keyFrame2);
@@ -275,7 +367,7 @@ public class Gameplay extends Pane {
 
         Timeline imminentWarningTimeline = new Timeline();
         for (int i = 1; i <= 3; i++) {
-            Image imminentWarningImage = new Image(getClass().getResourceAsStream("/is/vidmot/pics/missile/incoming" + i + ".png"));
+            Image imminentWarningImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/is/vidmot/pics/missile/incoming" + i + ".png")));
             KeyFrame keyFrame = new KeyFrame(Duration.millis(i * 224), e -> warningView.setImage(imminentWarningImage));
             imminentWarningTimeline.getKeyFrames().add(keyFrame);
         }
@@ -293,6 +385,9 @@ public class Gameplay extends Pane {
         imminentWarningTimeline.play();
     }
 
+    /**
+     * Update missiles.
+     */
     private void updateMissiles() {
         for (Missile missile : missiles) {
             missile.setTranslateX(missile.getTranslateX() - backgroundSpeed * 2);
@@ -303,6 +398,11 @@ public class Gameplay extends Pane {
         missiles.removeIf(missile -> missile.getTranslateX() + missile.getImageView().getFitWidth() < 0);
     }
 
+    /**
+     * Check collision boolean.
+     *
+     * @return the boolean
+     */
     private boolean checkCollision() {
         for (Zapper zapper : zappers) {
             Rectangle zapperRectangle = zapper.getRectangle();
@@ -325,6 +425,11 @@ public class Gameplay extends Pane {
         return false;
     }
 
+    /**
+     * Game over boolean.
+     *
+     * @return the boolean
+     */
     private boolean gameOver() {
         gameLoop.stop();
         GameOver gameOver = new GameOver(() -> restartGame(), () -> System.exit(0));
@@ -333,6 +438,9 @@ public class Gameplay extends Pane {
         return true;
     }
 
+    /**
+     * Restart game.
+     */
     private void restartGame() {
         getChildren().removeAll(zappers);
         zappers.clear();
@@ -356,6 +464,9 @@ public class Gameplay extends Pane {
         startGame();
     }
 
+    /**
+     * Remove coins.
+     */
     private void removeCoins() {
         List<Coin> coins = new ArrayList<>();
         for (Node node : getChildren()) {
@@ -366,6 +477,9 @@ public class Gameplay extends Pane {
         getChildren().removeAll(coins);
     }
 
+    /**
+     * Reset background.
+     */
     private void resetBackground() {
         currentBackgroundStyle = BackgroundStyle.SECTOR;
         currentBackgroundIndex = 2;
@@ -374,14 +488,29 @@ public class Gameplay extends Pane {
         background2.setTranslateX(background1.getImage().getWidth());
     }
 
+    /**
+     * Coin count property integer property.
+     *
+     * @return the integer property
+     */
     public IntegerProperty coinCountProperty() {
         return coinCount;
     }
 
+    /**
+     * Gets background speed.
+     *
+     * @return the background speed
+     */
     public double getBackgroundSpeed() {
         return backgroundSpeed;
     }
 
+    /**
+     * Meter count property integer property.
+     *
+     * @return the integer property
+     */
     public IntegerProperty meterCountProperty() {
         return meterCount;
     }

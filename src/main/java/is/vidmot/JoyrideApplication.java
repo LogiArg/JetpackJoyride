@@ -7,7 +7,19 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * The type Joyride application.
+ */
 public class JoyrideApplication extends Application {
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
+    public static void main(String[] args) {
+        launch();
+    }
+
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(JoyrideApplication.class.getResource("joyride-view.fxml"));
@@ -16,9 +28,5 @@ public class JoyrideApplication extends Application {
         stage.setScene(scene);
         stage.show();
         SoundManager.initialize();
-    }
-
-    public static void main(String[] args) {
-        launch();
     }
 }

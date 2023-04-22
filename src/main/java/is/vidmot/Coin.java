@@ -13,15 +13,37 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+/**
+ * The type Coin.
+ */
 public class Coin extends Pane {
-    private ImageView imageView;
+    /**
+     * The Image view.
+     */
+    private final ImageView imageView;
+    /**
+     * The Animation playing.
+     */
     private boolean animationPlaying = false;
+    /**
+     * The Animation played.
+     */
     private boolean animationPlayed = false;
+    /**
+     * The Collected.
+     */
     private boolean collected;
 
+    /**
+     * Instantiates a new Coin.
+     *
+     * @param x the x
+     * @param y the y
+     */
     public Coin(double x, double y) {
-        Image coinImage = new Image(getClass().getResourceAsStream("/is/vidmot/pics/coins/coin1.png"));
+        Image coinImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/is/vidmot/pics/coins/coin1.png")));
         imageView = new ImageView(coinImage);
         imageView.setFitWidth(24);
         imageView.setFitHeight(24);
@@ -30,10 +52,18 @@ public class Coin extends Pane {
         setTranslateY(y);
     }
 
+    /**
+     * Load coin pattern list.
+     *
+     * @param fileName the file name
+     *
+     * @return the list
+     */
     public static List<List<Coin>> loadCoinPattern(String fileName) {
         List<List<Coin>> pattern = new ArrayList<>();
         try {
             InputStream is = Coin.class.getResourceAsStream(fileName);
+            assert is != null;
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
 
@@ -59,15 +89,18 @@ public class Coin extends Pane {
         return pattern;
     }
 
+    /**
+     * Animate.
+     */
     public void animate() {
         animationPlaying = true;
         Timeline animation = new Timeline();
         for (int i = 1; i <= 6; i++) {
-            Image coinImage = new Image(getClass().getResourceAsStream("/is/vidmot/pics/coins/coin" + i + ".png"));
+            Image coinImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/is/vidmot/pics/coins/coin" + i + ".png")));
             KeyFrame keyFrame = new KeyFrame(Duration.millis(i * 100), e -> imageView.setImage(coinImage));
             animation.getKeyFrames().add(keyFrame);
         }
-        Image coinImage = new Image(getClass().getResourceAsStream("/is/vidmot/pics/coins/coin1.png"));
+        Image coinImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/is/vidmot/pics/coins/coin1.png")));
         KeyFrame keyFrame = new KeyFrame(Duration.millis(700), e -> imageView.setImage(coinImage));
         animation.getKeyFrames().add(keyFrame);
 
@@ -79,10 +112,13 @@ public class Coin extends Pane {
         animation.play();
     }
 
+    /**
+     * Play coin collected animation.
+     */
     public void playCoinCollectedAnimation() {
         Timeline collectedAnimation = new Timeline();
         for (int i = 1; i <= 4; i++) {
-            Image coinImage = new Image(getClass().getResourceAsStream("/is/vidmot/pics/coins/coinc" + i + ".png"));
+            Image coinImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/is/vidmot/pics/coins/coinc" + i + ".png")));
             KeyFrame keyFrame = new KeyFrame(Duration.millis(i * 66), e -> {
                 imageView.setImage(coinImage);
                 imageView.setFitWidth(34);
@@ -95,22 +131,45 @@ public class Coin extends Pane {
         collectedAnimation.play();
     }
 
+    /**
+     * Play coin sound.
+     */
     public void playCoinSound() {
         SoundManager.playCoinSound();
     }
 
+    /**
+     * Animation playing boolean.
+     *
+     * @return the boolean
+     */
     public boolean animationPlaying() {
         return animationPlaying;
     }
 
+    /**
+     * Animation played boolean.
+     *
+     * @return the boolean
+     */
     public boolean animationPlayed() {
         return animationPlayed;
     }
 
+    /**
+     * Is collected boolean.
+     *
+     * @return the boolean
+     */
     public boolean isCollected() {
         return collected;
     }
 
+    /**
+     * Sets collected.
+     *
+     * @param collected the collected
+     */
     public void setCollected(boolean collected) {
         this.collected = collected;
     }

@@ -10,11 +10,25 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-public class Missile extends Pane {
-    private ImageView imageView;
+import java.util.Objects;
 
+/**
+ * The type Missile.
+ */
+public class Missile extends Pane {
+    /**
+     * The Image view.
+     */
+    private final ImageView imageView;
+
+    /**
+     * Instantiates a new Missile.
+     *
+     * @param x the x
+     * @param y the y
+     */
     public Missile(double x, double y) {
-        Image missileImage = new Image(getClass().getResourceAsStream("/is/vidmot/pics/missile/missile1.png"));
+        Image missileImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/is/vidmot/pics/missile/missile1.png")));
         imageView = new ImageView(missileImage);
         imageView.setFitWidth(85);
         imageView.setFitHeight(65);
@@ -23,7 +37,7 @@ public class Missile extends Pane {
         setTranslateY(y);
         Timeline animation = new Timeline();
         for (int i = 1; i <= 14; i++) {
-            Image image = new Image(getClass().getResourceAsStream("/is/vidmot/pics/missile/missile" + i + ".png"));
+            Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/is/vidmot/pics/missile/missile" + i + ".png")));
             KeyFrame keyFrame = new KeyFrame(Duration.seconds(i * 0.05), e -> imageView.setImage(image));
             animation.getKeyFrames().add(keyFrame);
         }
@@ -31,10 +45,20 @@ public class Missile extends Pane {
         animation.play();
     }
 
+    /**
+     * Gets image view.
+     *
+     * @return the image view
+     */
     public ImageView getImageView() {
         return imageView;
     }
 
+    /**
+     * Gets hitbox.
+     *
+     * @return the hitbox
+     */
     public Rectangle getHitbox() {
         Bounds bounds = imageView.getBoundsInParent();
         double reducedWidth = bounds.getWidth() * 0.7;

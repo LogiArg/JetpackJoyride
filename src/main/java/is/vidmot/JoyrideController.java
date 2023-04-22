@@ -14,15 +14,37 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
+/**
+ * The type Joyride controller.
+ */
 public class JoyrideController implements Initializable {
+    /**
+     * The Fx gameplay.
+     */
     public Gameplay fxGameplay;
+    /**
+     * The Meter count.
+     */
     private int meterCount = 0;
-    private int coinCount = 0;
+    /**
+     * The Coin count.
+     */
+    private final int coinCount = 0;
+    /**
+     * The Coin counter text.
+     */
     private Text coinCounterText;
+    /**
+     * The Meter counter text.
+     */
     private Text meterCounterText;
-    private StringProperty meterCounterTextProperty = new SimpleStringProperty("0000 M");
+    /**
+     * The Meter counter text property.
+     */
+    private final StringProperty meterCounterTextProperty = new SimpleStringProperty("0000 M");
 
 
     @Override
@@ -42,6 +64,9 @@ public class JoyrideController implements Initializable {
         meterCountUpdater.start();
     }
 
+    /**
+     * Init coin counter.
+     */
     private void initCoinCounter() {
         try {
             Font font = Font.loadFont(getClass().getResourceAsStream("/is/vidmot/fonts/New Athletic M54.ttf"), 32);
@@ -51,7 +76,7 @@ public class JoyrideController implements Initializable {
             coinCounterText.setStroke(Color.BLACK);
             coinCounterText.setStrokeWidth(2);
 
-            Image coinImage = new Image(getClass().getResourceAsStream("/is/vidmot/pics/coins/coin1.png"));
+            Image coinImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/is/vidmot/pics/coins/coin1.png")));
             ImageView coinImageView = new ImageView(coinImage);
             coinImageView.setFitWidth(20);
             coinImageView.setFitHeight(20);
@@ -68,6 +93,9 @@ public class JoyrideController implements Initializable {
         }
     }
 
+    /**
+     * Init meter counter.
+     */
     private void initMeterCounter() {
         try {
             Font font = Font.loadFont(getClass().getResourceAsStream("/is/vidmot/fonts/New Athletic M54.ttf"), 40);
