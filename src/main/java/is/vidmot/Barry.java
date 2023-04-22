@@ -109,4 +109,8 @@ public class Barry extends ImageView {
             animation.pause();
         }
     }
+
+    public double getMaxY() {
+        return 461 - 30 - getFitHeight();
+    }
 }

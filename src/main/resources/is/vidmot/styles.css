@@ -1,0 +1,7 @@
+.coin-counter {
+    -fx-font-family: 'New Athletic M54';
+    -fx-font-size: 30;
+    -fx-fill: gold;
+    -fx-stroke: black;
+    -fx-stroke-width: 2;
+}

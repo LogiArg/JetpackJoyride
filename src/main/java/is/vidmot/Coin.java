@@ -18,6 +18,7 @@ public class Coin extends Pane {
     private ImageView imageView;
     private boolean animationPlaying = false;
     private boolean animationPlayed = false;
+    private boolean collected;
 
     public Coin(double x, double y) {
         Image coinImage = new Image(getClass().getResourceAsStream("/is/vidmot/pics/coins/coin1.png"));
@@ -104,5 +105,13 @@ public class Coin extends Pane {
 
     public boolean animationPlayed() {
         return animationPlayed;
+    }
+
+    public boolean isCollected() {
+        return collected;
+    }
+
+    public void setCollected(boolean collected) {
+        this.collected = collected;
     }
 }
