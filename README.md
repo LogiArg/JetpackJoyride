@@ -37,3 +37,7 @@ can start playing.
 
 Use the spacebar to control Barry's jetpack. Press and hold the spacebar to make Barry ascend, and release it to make
 him descend.
+
+## License
+
+This project is licensed under the MIT License. For more information, see the [LICENSE](LICENSE) file.
