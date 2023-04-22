@@ -37,11 +37,3 @@ can start playing.
 
 Use the spacebar to control Barry's jetpack. Press and hold the spacebar to make Barry ascend, and release it to make
 him descend.
-
-## Upcoming Features
-
-- Power-ups and additional obstacles
-- More detailed scoring system
-- Multiple levels with varying difficulty
-- Saving and loading of high scores
-- Improved graphics and animations
